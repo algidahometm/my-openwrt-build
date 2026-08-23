@@ -30,10 +30,12 @@ jobs:
         wget https://$A.$B.$C/$D/$E.tar.bz2
         tar -xjf $E.tar.bz2
         mv $E ib && cd ib
-        make image PROFILE="TLMR3420" PACKAGES="-odhcp6c -odhcpd -ip6tables -luci-proto-ipv6 -kmod-ipv6 -kmod-ip6tables"
+        
+        # Вырезаем IPv6, протоколы авторизации PPP/PPPoE и лишние USB-утилиты для экономии Flash-памяти
+        make image PROFILE="TLMR3420" PACKAGES="-odhcp6c -odhcpd -ip6tables -luci-proto-ipv6 -kmod-ipv6 -kmod-ip6tables -ppp -ppp-mod-pppoe -kmod-usb-net-ipheth -luci-proto-ppp"
 
     - name: step4
       uses: actions/upload-artifact@v4
       with:
-        name: OpenWrt_15.05_MR3420v2_NoIPv6
+        name: OpenWrt_15.05_MR3420v2_UltraLight
         path: ib/bin/

@@ -16,12 +16,12 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y build-essential libncurses5-dev gawk git subversion libssl-dev gettext unzip zlib1g-dev file python3
 
-    - name: Clone source code
+    - name: Download source code archive
       run: |
-        PART1="https:/"
-        PART2="github.com"
-        PART3="openwrt"
-        git clone -b chaos_calmer "$PART1/$PART2/$PART3/$PART3.git"
+        # Скачиваем официальный архив стабильного релиза 15.05.1
+        wget https://openwrt.org
+        tar -xjf openwrt-15.05.1.tar.bz2
+        mv openwrt-15.05.1 openwrt
         cd openwrt
         ./scripts/feeds update -a
         ./scripts/feeds install -a
@@ -30,10 +30,12 @@ jobs:
       run: |
         cd openwrt
         
+        # Настройки под процессор Atheros вашего TL-MR3420 v2
         echo "CONFIG_TARGET_ar71xx=y" > .config
         echo "CONFIG_TARGET_ar71xx_generic=y" >> .config
         echo "CONFIG_TARGET_ar71xx_generic_PROFILE_TLMR3420V2=y" >> .config
         
+        # Полное удаление IPv6
         echo "CONFIG_IPV6=n" >> .config
         echo "CONFIG_PACKAGE_odhcp6c=n" >> .config
         echo "CONFIG_PACKAGE_odhcpd=n" >> .config

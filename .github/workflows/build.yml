@@ -1,0 +1,51 @@
+name: Build OpenWrt 15.05 without IPv6
+
+on:
+  workflow_dispatch: # Позволяет запускать сборку вручную кнопкой
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Initialization environment
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential libncurses5-dev gawk git subversion libssl-dev gettext unzip zlib1g-dev file python3
+
+    - name: Clone source code
+      run: |
+        git clone -b chaos_calmer https://github.com
+        cd openwrt
+        ./scripts/feeds update -a
+        ./scripts/feeds install -a
+
+    - name: Configure and Patch IPv6 out
+      run: |
+        cd openwrt
+        # Создаем базовый конфиг (замените ar71xx и generic на вашу платформу, если нужно)
+        echo "CONFIG_TARGET_ar71xx=y" > .config
+        echo "CONFIG_TARGET_ar71xx_generic=y" >> .config
+        
+        # Отключаем IPv6 компоненты и глобальный флаг поддержки IPv6
+        echo "CONFIG_IPV6=n" >> .config
+        echo "CONFIG_PACKAGE_odhcp6c=n" >> .config
+        echo "CONFIG_PACKAGE_odhcpd=n" >> .config
+        echo "CONFIG_PACKAGE_ip6tables=n" >> .config
+        
+        # Генерируем финальный конфигурационный файл
+        make defconfig
+
+    - name: Compile firmware
+      run: |
+        cd openwrt
+        make -j$(nproc) V=s
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: OpenWrt_15.05_NoIPv6
+        path: openwrt/bin/

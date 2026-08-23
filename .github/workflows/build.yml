@@ -18,8 +18,9 @@ jobs:
 
     - name: Download source code archive
       run: |
-        # Скачиваем официальный архив стабильного релиза 15.05.1
-        wget https://openwrt.org
+        P1="downloads.openwrt.org"
+        P2="chaos_calmer/15.05.1/source/openwrt-15.05.1.tar.bz2"
+        wget https://$P1/$P2
         tar -xjf openwrt-15.05.1.tar.bz2
         mv openwrt-15.05.1 openwrt
         cd openwrt
@@ -30,12 +31,10 @@ jobs:
       run: |
         cd openwrt
         
-        # Настройки под процессор Atheros вашего TL-MR3420 v2
         echo "CONFIG_TARGET_ar71xx=y" > .config
         echo "CONFIG_TARGET_ar71xx_generic=y" >> .config
         echo "CONFIG_TARGET_ar71xx_generic_PROFILE_TLMR3420V2=y" >> .config
         
-        # Полное удаление IPv6
         echo "CONFIG_IPV6=n" >> .config
         echo "CONFIG_PACKAGE_odhcp6c=n" >> .config
         echo "CONFIG_PACKAGE_odhcpd=n" >> .config

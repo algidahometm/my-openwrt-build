@@ -18,7 +18,10 @@ jobs:
 
     - name: Clone source code
       run: |
-        git clone -b chaos_calmer https://github.com
+        PART1="https:/"
+        PART2="github.com"
+        PART3="openwrt"
+        git clone -b chaos_calmer "$PART1/$PART2/$PART3/$PART3.git"
         cd openwrt
         ./scripts/feeds update -a
         ./scripts/feeds install -a

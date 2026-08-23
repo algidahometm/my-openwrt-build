@@ -30,4 +30,10 @@ jobs:
         wget https://$A.$B.$C/$D/$E.tar.bz2
         tar -xjf $E.tar.bz2
         mv $E ib && cd ib
-        make info
+        make image PROFILE="TLMR3420" PACKAGES="-odhcp6c -odhcpd -ip6tables -luci-proto-ipv6 -kmod-ipv6 -kmod-ip6tables"
+
+    - name: step4
+      uses: actions/upload-artifact@v4
+      with:
+        name: OpenWrt_15.05_MR3420v2_NoIPv6
+        path: ib/bin/

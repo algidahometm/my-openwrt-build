@@ -18,12 +18,10 @@ jobs:
 
     - name: Clone source code
       run: |
-        G="github.com"
-        O="openwrt"
-        git clone https://$G/$O/$O.git openwrt
+        # Скачиваем стабильный срез Chaos Calmer из официального зеркала исходных кодов kernel.org
+        git clone https://kernel.org openwrt
         cd openwrt
-        # Переключаемся на финальный стабильный коммит релиза 15.05.1
-        git checkout 8431e7b44bc699cfef0b5d92df99540e1e600570
+        git checkout chaos_calmer
         ./scripts/feeds update -a
         ./scripts/feeds install -a
 

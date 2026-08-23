@@ -5,7 +5,10 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
+
+    container:
+      image: ubuntu:20.04
 
     steps:
     - name: step1
@@ -17,8 +20,9 @@ jobs:
 
     - name: step2
       run: |
-        sudo DEBIAN_FRONTEND=noninteractive apt-get update
-        sudo DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential libncurses5-dev gawk git subversion libssl-dev gettext unzip zlib1g-dev file python3
+        export DEBIAN_FRONTEND=noninteractive
+        apt-get update
+        apt-get install -y build-essential libncurses5-dev gawk git subversion libssl-dev gettext unzip zlib1g-dev file python3-distutils python3
 
     - name: step3
       run: |

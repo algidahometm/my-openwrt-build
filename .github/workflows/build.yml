@@ -1,7 +1,7 @@
 name: Build OpenWrt 15.05 for MR3420v2 without IPv6
 
 on:
-  workflow_dispatch: # Кнопка ручного запуска в интерфейсе
+  workflow_dispatch:
 
 jobs:
   build:
@@ -18,8 +18,7 @@ jobs:
 
     - name: Clone source code
       run: |
-        REPO="https://github.com"
-        git clone -b chaos_calmer $REPO
+        git clone -b chaos_calmer https://github.com
         cd openwrt
         ./scripts/feeds update -a
         ./scripts/feeds install -a
@@ -28,20 +27,15 @@ jobs:
       run: |
         cd openwrt
         
-        # Задаем архитектуру процессора Atheros AR7xxx/AR9xxx
         echo "CONFIG_TARGET_ar71xx=y" > .config
         echo "CONFIG_TARGET_ar71xx_generic=y" >> .config
-        
-        # Выбираем конкретный профиль вашего роутера TP-Link TL-MR3420 v2
         echo "CONFIG_TARGET_ar71xx_generic_PROFILE_TLMR3420V2=y" >> .config
         
-        # Полное удаление компонентов IPv6 для экономии памяти
         echo "CONFIG_IPV6=n" >> .config
         echo "CONFIG_PACKAGE_odhcp6c=n" >> .config
         echo "CONFIG_PACKAGE_odhcpd=n" >> .config
         echo "CONFIG_PACKAGE_ip6tables=n" >> .config
         
-        # Применяем настройки
         make defconfig
 
     - name: Compile firmware

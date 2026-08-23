@@ -31,11 +31,11 @@ jobs:
         tar -xjf $E.tar.bz2
         mv $E ib && cd ib
         
-        # Вырезаем IPv6/PPP и добавляем пакеты для работы USB веб-камеры
-        make image PROFILE="TLMR3420" PACKAGES="-odhcp6c -odhcpd -ip6tables -luci-proto-ipv6 -kmod-ipv6 -kmod-ip6tables -ppp -ppp-mod-pppoe -kmod-usb-net-ipheth -luci-proto-ppp kmod-video-core kmod-video-uvc libjpeg mjpg-streamer"
+        # Добавляем ПАКЕТ luci и вырезаем IPv6/PPP компоненты
+        make image PROFILE="TLMR3420" PACKAGES="luci -odhcp6c -odhcpd -ip6tables -luci-proto-ipv6 -kmod-ipv6 -kmod-ip6tables -ppp -ppp-mod-pppoe -kmod-usb-net-ipheth -luci-proto-ppp"
 
     - name: step4
       uses: actions/upload-artifact@v4
       with:
-        name: OpenWrt_15.05_MR3420v2_Webcam_Server
+        name: OpenWrt_15.05_MR3420v2_With_LuCI
         path: ib/bin/

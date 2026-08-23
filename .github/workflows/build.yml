@@ -1,7 +1,7 @@
-name: Build OpenWrt 15.05 without IPv6
+name: Build OpenWrt 15.05 for MR3420v2 without IPv6
 
 on:
-  workflow_dispatch: # Позволяет запускать сборку вручную кнопкой
+  workflow_dispatch: # Кнопка ручного запуска в интерфейсе
 
 jobs:
   build:
@@ -18,7 +18,8 @@ jobs:
 
     - name: Clone source code
       run: |
-        git clone -b chaos_calmer https://github.com
+        REPO="https://github.com"
+        git clone -b chaos_calmer $REPO
         cd openwrt
         ./scripts/feeds update -a
         ./scripts/feeds install -a
@@ -26,17 +27,21 @@ jobs:
     - name: Configure and Patch IPv6 out
       run: |
         cd openwrt
-        # Создаем базовый конфиг (замените ar71xx и generic на вашу платформу, если нужно)
+        
+        # Задаем архитектуру процессора Atheros AR7xxx/AR9xxx
         echo "CONFIG_TARGET_ar71xx=y" > .config
         echo "CONFIG_TARGET_ar71xx_generic=y" >> .config
         
-        # Отключаем IPv6 компоненты и глобальный флаг поддержки IPv6
+        # Выбираем конкретный профиль вашего роутера TP-Link TL-MR3420 v2
+        echo "CONFIG_TARGET_ar71xx_generic_PROFILE_TLMR3420V2=y" >> .config
+        
+        # Полное удаление компонентов IPv6 для экономии памяти
         echo "CONFIG_IPV6=n" >> .config
         echo "CONFIG_PACKAGE_odhcp6c=n" >> .config
         echo "CONFIG_PACKAGE_odhcpd=n" >> .config
         echo "CONFIG_PACKAGE_ip6tables=n" >> .config
         
-        # Генерируем финальный конфигурационный файл
+        # Применяем настройки
         make defconfig
 
     - name: Compile firmware
@@ -47,5 +52,5 @@ jobs:
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: OpenWrt_15.05_NoIPv6
+        name: OpenWrt_15.05_MR3420v2_NoIPv6
         path: openwrt/bin/

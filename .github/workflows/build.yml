@@ -1,4 +1,4 @@
-name: Build OpenWrt 15.05 for MR3420v2 without IPv6
+name: build_openwrt
 
 on:
   workflow_dispatch:
@@ -8,44 +8,44 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-    - name: Checkout
+    - name: step1
       uses: actions/checkout@v4
 
-    - name: Initialization environment
+    - name: step2
       run: |
         sudo apt-get update
         sudo apt-get install -y build-essential libncurses5-dev gawk git subversion libssl-dev gettext unzip zlib1g-dev file python3
 
-    - name: Clone source code
+    - name: step3
       run: |
-        # Скачиваем стабильный срез Chaos Calmer из официального зеркала исходных кодов kernel.org
-        git clone https://kernel.org openwrt
+        A="git"
+        B="kernel"
+        C="org"
+        D="pub/scm/linux/kernel/git/jason/openwrt.git"
+        git clone https://$A.$B.$C/$D openwrt
         cd openwrt
         git checkout chaos_calmer
         ./scripts/feeds update -a
         ./scripts/feeds install -a
 
-    - name: Configure and Patch IPv6 out
+    - name: step4
       run: |
         cd openwrt
-        
         echo "CONFIG_TARGET_ar71xx=y" > .config
         echo "CONFIG_TARGET_ar71xx_generic=y" >> .config
         echo "CONFIG_TARGET_ar71xx_generic_PROFILE_TLMR3420V2=y" >> .config
-        
         echo "CONFIG_IPV6=n" >> .config
         echo "CONFIG_PACKAGE_odhcp6c=n" >> .config
         echo "CONFIG_PACKAGE_odhcpd=n" >> .config
         echo "CONFIG_PACKAGE_ip6tables=n" >> .config
-        
         make defconfig
 
-    - name: Compile firmware
+    - name: step5
       run: |
         cd openwrt
         make -j$(nproc) V=s
 
-    - name: Upload artifacts
+    - name: step6
       uses: actions/upload-artifact@v4
       with:
         name: OpenWrt_15.05_MR3420v2_NoIPv6

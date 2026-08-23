@@ -16,14 +16,14 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y build-essential libncurses5-dev gawk git subversion libssl-dev gettext unzip zlib1g-dev file python3
 
-    - name: Download source code archive
+    - name: Clone source code
       run: |
-        P1="downloads.openwrt.org"
-        P2="chaos_calmer/15.05.1/source/openwrt-15.05.1.tar.bz2"
-        wget https://$P1/$P2
-        tar -xjf openwrt-15.05.1.tar.bz2
-        mv openwrt-15.05.1 openwrt
+        G="github.com"
+        O="openwrt"
+        git clone https://$G/$O/$O.git openwrt
         cd openwrt
+        # Переключаемся на финальный стабильный коммит релиза 15.05.1
+        git checkout 8431e7b44bc699cfef0b5d92df99540e1e600570
         ./scripts/feeds update -a
         ./scripts/feeds install -a
 

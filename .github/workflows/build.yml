@@ -31,11 +31,11 @@ jobs:
         tar -xjf $E.tar.bz2
         mv $E ib && cd ib
         
-        # Добавляем ПАКЕТ luci и вырезаем IPv6/PPP компоненты
-        make image PROFILE="TLMR3420" PACKAGES="luci -odhcp6c -odhcpd -ip6tables -luci-proto-ipv6 -kmod-ipv6 -kmod-ip6tables -ppp -ppp-mod-pppoe -kmod-usb-net-ipheth -luci-proto-ppp"
+        # Добавляем веб-интерфейс (luci), драйверы видео (kmod-video-uvc) и стример (mjpg-streamer)
+        make image PROFILE="TLMR3420" PACKAGES="luci kmod-video-core kmod-video-uvc libjpeg mjpg-streamer -odhcp6c -odhcpd -ip6tables -luci-proto-ipv6 -kmod-ipv6 -kmod-ip6tables -ppp -ppp-mod-pppoe -kmod-usb-net-ipheth -luci-proto-ppp"
 
     - name: step4
       uses: actions/upload-artifact@v4
       with:
-        name: OpenWrt_15.05_MR3420v2_With_LuCI
+        name: OpenWrt_15.05_MR3420v2_Camera_with_LuCI
         path: ib/bin/

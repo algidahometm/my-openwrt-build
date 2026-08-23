@@ -5,26 +5,24 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-20.04
 
     steps:
     - name: step1
       uses: actions/checkout@v4
+      with:
+        repository: openwrt/openwrt
+        ref: v15.05.1
+        path: openwrt
 
     - name: step2
       run: |
-        sudo apt-get update
-        sudo apt-get install -y build-essential libncurses5-dev gawk git subversion libssl-dev gettext unzip zlib1g-dev file python3
+        sudo DEBIAN_FRONTEND=noninteractive apt-get update
+        sudo DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential libncurses5-dev gawk git subversion libssl-dev gettext unzip zlib1g-dev file python3
 
     - name: step3
       run: |
-        A="git"
-        B="kernel"
-        C="org"
-        D="pub/scm/linux/kernel/git/jason/openwrt.git"
-        git clone https://$A.$B.$C/$D openwrt
         cd openwrt
-        git checkout chaos_calmer
         ./scripts/feeds update -a
         ./scripts/feeds install -a
 

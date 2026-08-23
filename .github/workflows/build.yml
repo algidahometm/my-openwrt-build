@@ -13,10 +13,6 @@ jobs:
     steps:
     - name: step1
       uses: actions/checkout@v4
-      with:
-        repository: openwrt/openwrt
-        ref: v15.05.1
-        path: openwrt
 
     - name: step2
       run: |
@@ -26,6 +22,7 @@ jobs:
 
     - name: step3
       run: |
+        git clone https://openwrt.org openwrt
         cd openwrt
         ./scripts/feeds update -a
         ./scripts/feeds install -a
